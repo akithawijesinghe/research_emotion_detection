@@ -4,8 +4,7 @@ __pycache__/
 *.pyc
 .DS_Store
 *.joblib
-*.png
-*.csv
+
 
 # Optionally ignore large HuggingFace datasets and models
 data/hf_train_dataset/
@@ -13,8 +12,9 @@ data/hf_test_dataset/
 data/new_hf_train_dataset/
 data/new_hf_test_dataset/
 
+data/
+
 models/
-results/
 
 # Temp training cache
 tmp_trainer/
