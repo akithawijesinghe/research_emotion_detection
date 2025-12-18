@@ -1,0 +1,67 @@
+⭐ 4. WHAT WRITERS MUST WRITE (COPY-PASTE EXACT TEXT)
+
+You can copy this directly into the thesis.
+
+📄 Paragraph for "Tuned Model Performance"
+
+After identifying Logistic Regression as the strongest baseline model, we performed hyperparameter tuning using GridSearchCV to improve performance. The tuning process explored combinations of regularization strength (C ∈ {0.1, 1, 5}) and class weights ({None, balanced}), using the SAGA solver, which is well suited for multinomial text classification.
+
+The model was evaluated using five-fold cross-validation with macro-F1 as the scoring metric to ensure equal importance for all emotion classes. The best-performing configuration was obtained with C = 1 and class_weight = ‘balanced’, producing a cross-validated macro-F1 of 0.5051. When evaluated on the test set, the tuned model achieved an accuracy of 0.5180. Although the improvement over the baseline (0.5229) was slight, the tuned model produced more balanced class-wise performance, particularly for under-represented emotions such as fear and anxiety.
+
+The confusion matrix in Figure X illustrates the distribution of predictions across the five target emotion categories. Improvements were observed in the precision and recall of the grief and anxiety classes, demonstrating the benefit of balanced class weighting. Full tuning results, including all tested parameter combinations, are provided in Appendix Y.
+
+⭐ 5. TECHNICAL DETAILS (include in Materials & Methods)
+
+This goes in Methods → Model Training → Hyperparameter Tuning.
+
+Hyperparameter tuning was performed using Scikit-Learn’s GridSearchCV. The search space included the regularization parameter C ∈ {0.1, 1, 5} and class weights {None, balanced}. A multinomial Logistic Regression model with the SAGA solver was used, as SAGA supports L2 penalty and efficient optimization on high-dimensional sparse TF-IDF text features.
+
+The evaluation metric was macro-F1, chosen due to the near-balanced dataset and the need to give equal importance to minority classes. Five-fold cross-validation was applied during tuning to reduce variance and ensure generalizable results. The tuned model was then trained on the full training set and saved as models/logreg_tuned.joblib.
+
+⭐ 6. KEY METRICS WRITERS MUST INCLUDE
+📌 From your outputs:
+Component	Value
+Best Parameters	C = 1, class_weight = 'balanced'
+Best CV Macro-F1	0.50509
+Tuned Test Accuracy	0.51803
+Baseline LR Accuracy	0.52295
+Tuned macro-F1	0.52049 (from CSV)
+
+Add this as a table in Results.
+
+⭐ 7. Summary Message for FISANA & FARIJA (paste this directly)
+
+FILES FOR TUNED MODEL DOCUMENTATION (TODAY)
+Please add these to the thesis:
+
+logreg_tuned_classification_report.csv
+
+logreg_tuned_confusion_matrix.csv
+
+logreg_tuned_confusion_matrix.png
+
+model_accuracy_comparison_updated.png
+
+logreg_gridsearch_results.csv
+
+Insert into:
+
+Results & Discussion → Tuned Model Performance
+
+List of Figures
+
+Appendix
+
+Figures to include:
+
+Updated accuracy comparison
+
+Tuned confusion matrix
+
+Text to include:
+
+Provided Tuned Model Performance paragraph
+
+Explanation of hyperparameter tuning
+
+Summary table of best parameters & performance

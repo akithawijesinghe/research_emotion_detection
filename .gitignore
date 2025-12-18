@@ -1,0 +1,20 @@
+# Don't track these heavy or unnecessary folders/files
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.joblib
+
+# Optionally ignore large HuggingFace datasets and models
+data/hf_train_dataset/
+data/hf_test_dataset/
+data/new_hf_train_dataset/
+data/new_hf_test_dataset/
+
+models/
+
+# Temp training cache
+tmp_trainer/
+
+# VS Code settings (optional)
+.vscode/

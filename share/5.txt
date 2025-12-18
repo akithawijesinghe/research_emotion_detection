@@ -1,0 +1,34 @@
+2️⃣ Chapter: Results & Discussion
+→ Section: Baseline Model Performance
+
+Here the writers will include:
+
+Figure 4.1 — Model Accuracy Comparison
+
+Use the file:
+results/model_accuracy_comparison.png
+
+Figure 4.2 — Confusion Matrix (Logistic Regression)
+
+Use the file:
+results/LogisticRegression_confusion_matrix.png
+
+📘 WHAT WRITERS MUST WRITE (FULL EXPLANATION)
+
+I am giving you the exact text they should paste into the thesis.
+
+📄 Paragraph for “Results & Discussion”
+
+To understand the initial performance of traditional machine-learning algorithms on the emotion detection task, four baseline classifiers were trained: Logistic Regression, Multinomial Naive Bayes, Linear Support Vector Classifier, and Random Forest.
+
+Figure 4.1 presents the test-set accuracy of each model. Logistic Regression achieved the highest accuracy (0.5229), followed closely by Random Forest (0.5000). Linear SVC and Multinomial Naive Bayes performed slightly lower on this dataset. Logistic Regression was selected as the baseline model for further tuning due to its simplicity, stability, and strong performance with TF-IDF text features.
+
+Figure 4.2 shows the confusion matrix for the Logistic Regression model. The diagonal values indicate the correctly classified instances, while off-diagonal values represent misclassifications. The model performed well on sadness and anger but struggled with fear and anxiety, which were often confused due to linguistic similarity in short YouTube comments. This analysis provides the foundation for improvements through hyperparameter tuning and error analysis.
+
+🔧 Technical Explanation (for Materials & Methods)
+
+Writers must include these points to explain how plots were generated.
+
+The baseline plots were generated using Seaborn and Matplotlib.
+
+The bar chart compares the test-set accuracies of all four models, visualising overall performance differences. The confusion matrix heatmap was generated using the true and predicted labels from the Logistic Regression model, allowing easier interpretation of class-wise errors. Both figures were exported as PNG files using the plotting script scripts/plots.py.

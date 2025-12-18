@@ -1,0 +1,80 @@
+🔹 What each file is and how to explain it (short, writer-friendly)
+model_comparison.csv
+
+Contains rows: model name, accuracy, macro_f1.
+Explain: “This table compares baseline models (LogisticRegression, MultinomialNB, LinearSVC, RandomForest) using test-set accuracy and macro-F1. Macro-F1 averages F1-scores across classes equally and is preferred for balanced evaluation across emotions.”
+
+LogisticRegression_classification_report.csv
+
+Contains per-class precision, recall, f1-score, support.
+Explain:
+
+Precision = when model predicts a class, how often it was correct.
+
+Recall = of all real examples for a class, how many the model found.
+
+F1-score = harmonic mean of precision & recall; best single per-class metric.
+
+Support = number of true examples in test set for that class.
+
+Use these CSV numbers to produce a short table or to quote top lines in Results.
+
+LogisticRegression_confusion_matrix.csv
+
+Square table where rows = true labels and columns = predicted labels.
+Explain: Each cell shows how many items of class A were predicted as class B; the diagonal shows correct predictions. Use heatmap to visually present confusion patterns—e.g., “fear often misclassified as anxiety/anger”.
+
+model_accuracy_comparison.png
+
+Bar chart of accuracy for the four baseline models — place this as a figure and refer to it when saying “Logistic Regression achieved highest accuracy”.
+
+🔹 Technical details (exact — for Methods & Annex)
+
+Models trained and main hyperparameters (as used in scripts/train_baselines.py):
+
+LogisticRegression — max_iter=2000, random_state=42, C=1.0 (default in baseline run)
+
+MultinomialNB — default parameters (suitable for TF-IDF counts)
+
+LinearSVC — max_iter=20000, random_state=42
+
+RandomForestClassifier — n_estimators=200, random_state=42 (use n_jobs=-1 if you change script to speed up)
+
+Training details to state in Methods:
+
+Train on TF-IDF features (unigram + bigram, 5000 features).
+
+Train/test split = 80/20 stratified.
+
+Models trained on X_train_tfidf, evaluated on X_test_tfidf.
+
+Saved models as joblib files to models/<ModelName>.joblib.
+
+Results saved to results/<ModelName>_classification_report.csv and results/<ModelName>_confusion_matrix.csv.
+
+Exact commands to reproduce (copy/paste):
+
+# activate venv, from project root
+source venv/bin/activate
+
+# run baseline training
+python3 scripts/train_baselines.py
+
+
+If writers want pipeline reproducibility, give them scripts/train_baselines.py and point to the saved TF-IDF matrices in models/.
+
+🔹 Suggested short paragraph for the thesis (copy-paste)
+
+Baseline model training and evaluation
+
+We trained four baseline classifiers on TF-IDF features — Logistic Regression, Multinomial Naive Bayes, Linear SVC, and Random Forest — using an 80/20 stratified split of the cleaned dataset. Each model was trained on the sparse TF-IDF matrices (unigram+bigram, 5000 features) and evaluated on the held-out test set. Table X summarizes test accuracy and macro-F1 for each model. Logistic Regression achieved the highest accuracy (0.52295) and macro-F1 (0.5192) and was selected as the primary baseline for further tuning. Per-class precision, recall, and F1 metrics are reported in the classification report, and the confusion matrix (Figure Y) shows that fear is the most confused class, frequently predicted as anxiety or anger.
+
+🔹 What else to include in Results & Discussion about baseline (talking points)
+
+Mention approximate class supports (test set distribution) — shows fairness.
+
+Talk about best/worst classes (use classification report): e.g., “Sadness highest F1, Fear lowest F1.”
+
+Briefly interpret confusion matrix: which classes are being confused and why (language overlap, short/ambiguous comments).
+
+Show model comparison chart and comment: “LogReg marginally better — simple, interpretable, and performs well for TF-IDF features.”

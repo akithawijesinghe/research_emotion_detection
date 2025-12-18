@@ -1,0 +1,35 @@
+✅ 4. Extra Notes for Writers (Technical Explanation)
+
+Writers do not know ML, so give them this explanation:
+
+⭐ Why TF-IDF was chosen
+
+Simple, efficient, widely used for text classification
+
+Works well for short emotional comments
+
+Avoids giving too much importance to very common words
+
+Helps the model focus on meaningful emotional keywords
+(e.g., “hurt”, “sad”, “angry”, “panic attack”, “miss you”, etc.)
+
+⭐ What "n-grams" means
+
+unigram = one word → “fear”, “feel”, “crying”
+
+bigram = two-word phrase → “panic attack”, “feeling lost”, “very sad”
+
+Using bigrams improves emotion detection accuracy.
+
+⭐ What “5000 features” means
+
+The model chooses the top 5000 most important vocabulary items.
+Each comment becomes a 5000-dimensional vector.
+
+⭐ Why 80/20 stratified split
+
+Ensures the test set contains equal proportions of each emotion type.
+
+You must give this explanation so they can write:
+
+📍 Chapter 3 → 3.3 Feature Extraction → TF-IDF Transformation

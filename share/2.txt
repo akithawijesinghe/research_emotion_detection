@@ -1,0 +1,88 @@
+📍 Thesis → Chapter 3 (Materials & Methods) → Section: Data Preprocessing
+
+Writers cannot write this correctly unless you give them the following:
+
+⭐ WHAT YOU MUST GIVE WRITERS FOR THE PREPROCESSING SECTION
+
+There are 3 things you MUST give them:
+
+✅ 1. A Text Explanation (what steps you performed)
+
+They need a description of WHAT YOU DID in preprocessing.
+
+They cannot guess it — you must give them the details.
+
+This is the EXACT text they need (copy/paste for them):
+
+⭐ PREPROCESSING STEPS YOU PERFORMED (Clear Explanation)
+Step 1: Lowercasing
+
+All comments were converted to lowercase
+Example:
+“THIS IS SAD” → “this is sad”
+
+Why: Helps model treat same words equally.
+
+Step 2: Removing extra spaces
+
+Trim spaces at beginning & end.
+Example:
+“ hello ” → “hello”
+
+Why: Keeps text clean and consistent.
+
+Step 3: Removing null comments
+
+If any comment was empty, blank, or null → removed.
+
+In your dataset:
+6 null comments were removed.
+
+Step 4: Converting emotion codes to full words
+
+Original dataset had:
+
+Code	Emotion
+A	anger
+F	fear
+S	sadness
+AN	anxiety
+G	grief
+
+You converted them into full lowercase emotion names:
+
+A → anger
+
+F → fear
+
+S → sadness
+
+AN → anxiety
+
+G → grief
+
+Why: ML models require consistent labels.
+
+Step 5: Checking label distribution
+
+Final counts:
+
+anger = 1501
+
+grief = 1201
+
+anxiety = 1199
+
+sadness = 1136
+
+fear = 1059
+
+Why: This shows the dataset is nearly balanced, which is important for model fairness.
+
+Step 6: Saving the final clean dataset
+
+You saved it as:
+
+📁 data/cleaned_comments.csv
+
+This is the file the model uses.

@@ -1,0 +1,73 @@
+⭐ 3. What Writers Must Write (Copy-Paste Text)
+
+Here is the thesis-ready paragraph:
+
+📄 Suggested Error Analysis Paragraph (paste into thesis)
+
+To better understand the limitations of the tuned Logistic Regression model, we extracted 100 randomly selected misclassified instances from the test set (Appendix X). Each record includes the original YouTube comment, the true emotion label, and the predicted label. These samples reveal several recurring patterns in model failures.
+
+Many misclassifications occurred in short or ambiguous comments where emotional tone is difficult to detect (e.g., single-word responses or vague reactions). Another common source of errors involved overlap between semantically related emotions, particularly fear, anxiety, and anger. These emotions often co-occur in online discussions, leading the model to confuse categories with similar linguistic cues.
+
+Some failures were due to missing context, sarcasm, or multi-emotion expressions. Manual review showed that a portion of errors may also be attributed to annotation noise or ambiguous labeling. The findings from this analysis highlight opportunities for future work such as using contextual embeddings (e.g., BERT) or multi-label emotion classification.
+
+⭐ 4. Technical Explanation (What YOU Did — Goes in Methods)
+
+This goes to Materials & Methods → Evaluation → Error Analysis.
+
+After evaluating the tuned model, we extracted misclassified test-set predictions by comparing the predicted emotion label against the true annotated label. All incorrectly classified samples were collected, and 100 were selected for manual qualitative analysis. This process was performed programmatically by filtering prediction results from the tuned model and writing them to the file misclassified_sample_100_tuned.csv. These samples were used to categorize common error types and understand the model’s failure patterns.
+
+⭐ 5. Extra Explanation (For Writers’ Understanding)
+
+So they fully understand what this file means:
+
+What is “Misclassified Sample Extraction”?
+
+It means:
+
+The model made mistakes.
+
+You extracted ONLY those wrong predictions.
+
+You sampled 100 of them.
+
+These 100 rows show:
+
+actual emotion
+
+predicted emotion
+
+the YouTube comment text
+
+These examples help analyze why the model failed.
+
+Why this step is important in research?
+
+Because:
+
+A model’s accuracy number doesn’t explain why it failed.
+
+Error analysis reveals weaknesses:
+
+linguistic ambiguity
+
+overlapping emotions
+
+sarcasm
+
+short comments
+
+labeling issues
+
+lack of context
+
+What does the writer do with it?
+
+They will:
+
+Review the 100 samples
+
+Group them into categories (optional)
+
+Write insights in the Discussion section
+
+Put full CSV in the Annex

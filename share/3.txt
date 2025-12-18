@@ -1,0 +1,39 @@
+✅ 1. Text Explanation (copy–paste to writers)
+
+This is the formal description of what you performed.
+
+⭐ FEATURE EXTRACTION USING TF-IDF (full explanation)
+
+After cleaning the dataset, the emotional text comments were converted into numerical form using the TF-IDF (Term Frequency–Inverse Document Frequency) vectorizer.
+TF-IDF assigns higher importance to words that are frequent within a comment but rare across the whole dataset.
+
+This step transforms raw text into a machine-understandable format.
+
+Parameters used
+
+You applied the following settings:
+
+Parameter	Value	Meaning
+ngram_range	(1,2)	Uses unigrams and bigrams (1-word and 2-word phrases)
+max_features	5000	Keep only top 5000 most important features
+stop_words	"english"	Removes common English words like "the", "is", "and"
+split	80% train / 20% test	Stratified to keep emotion distribution equal
+Output
+
+TF-IDF produced two sparse matrices:
+
+X_train_tfidf shape → (4876, 5000)
+
+X_test_tfidf shape → (1220, 5000)
+
+Interpretation:
+
+4876 training samples
+
+1220 testing samples
+
+each sample represented by 5000 features
+
+These matrices are used by all machine-learning models (Logistic Regression, SVM, Random Forest, etc.)
+
+You also saved the TF-IDF vectorizer to ensure consistent transformation during model deployment.
