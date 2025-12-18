@@ -11,6 +11,8 @@ data/hf_test_dataset/
 data/new_hf_train_dataset/
 data/new_hf_test_dataset/
 
+data/
+
 models/
 
 # Temp training cache
