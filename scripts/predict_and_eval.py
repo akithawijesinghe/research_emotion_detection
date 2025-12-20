@@ -121,3 +121,111 @@ else:
     print(f"Saved {sample_count} misclassified samples to", mis_sample_csv)
 
 print("All done.")
+
+
+
+
+
+# # scripts/predict_and_eval_roberta.py
+
+# import os
+# import json
+# import numpy as np
+# import pandas as pd
+# from datasets import load_from_disk
+# from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, Trainer
+# import torch
+# from sklearn.metrics import classification_report, confusion_matrix
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+
+# MODEL_NAME = "roberta"
+# MODEL_DIR = f"models/{MODEL_NAME}_finetuned"
+# TEST_DS_DIR = "data/hf_test_dataset"
+# OUT_DIR = "results"
+# PRED_DIR = "predictions"
+# os.makedirs(OUT_DIR, exist_ok=True)
+# os.makedirs(PRED_DIR, exist_ok=True)
+
+# # === 1. Load model and tokenizer ===
+# print(f"🔹 Loading {MODEL_NAME} model and tokenizer...")
+# tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=True)
+# model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
+
+# # === 2. Load and preprocess test dataset ===
+# print("🔹 Loading test dataset...")
+# test_ds = load_from_disk(TEST_DS_DIR)
+
+# assert "comment" in test_ds.column_names and "label" in test_ds.column_names
+
+# def preprocess(batch):
+#     return tokenizer(batch["comment"], truncation=True, max_length=128)
+
+# test_ds = test_ds.map(preprocess, batched=True)
+# data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+# trainer = Trainer(model=model, data_collator=data_collator, tokenizer=tokenizer)
+
+# # === 3. Run inference ===
+# print("🔹 Running predictions...")
+# pred_output = trainer.predict(test_ds)
+# logits = pred_output.predictions
+# if isinstance(logits, tuple):
+#     logits = logits[0]
+# probs = torch.nn.functional.softmax(torch.tensor(logits), dim=-1).numpy()
+# pred_ids = np.argmax(probs, axis=1)
+# true_ids = pred_output.label_ids
+
+# # === 4. Load label maps ===
+# id2label = json.load(open("models/id2label.json"))
+# id2label = {int(k): v for k, v in id2label.items()}
+# label_names = [id2label[i] for i in sorted(id2label.keys())]
+
+# pred_names = [id2label[i] for i in pred_ids]
+# true_names = [id2label[i] for i in true_ids]
+
+# # === 5. Save prediction CSV with softmax for ensemble ===
+# probs_df = pd.DataFrame(probs, columns=label_names)
+# probs_df["true_label_id"] = true_ids
+# probs_df["pred_label_id"] = pred_ids
+
+# probs_df.to_csv(f"{PRED_DIR}/{MODEL_NAME}_test_predictions.csv", index=False)
+# print(f"✅ Saved softmax predictions: {PRED_DIR}/{MODEL_NAME}_test_predictions.csv")
+
+# # === 6. Save regular prediction output ===
+# df = pd.DataFrame({
+#     "comment": test_ds["comment"],
+#     "true_label_id": true_ids,
+#     "true_label": true_names,
+#     "pred_label_id": pred_ids,
+#     "pred_label": pred_names,
+# })
+# df = pd.concat([df.reset_index(drop=True), probs_df[label_names].reset_index(drop=True)], axis=1)
+# df.to_csv(f"{OUT_DIR}/{MODEL_NAME}_test_predictions.csv", index=False)
+# print(f"✅ Saved: {OUT_DIR}/{MODEL_NAME}_test_predictions.csv")
+
+# # === 7. Classification report ===
+# report = classification_report(true_ids, pred_ids, target_names=label_names, output_dict=True, zero_division=0)
+# pd.DataFrame(report).transpose().to_csv(f"{OUT_DIR}/{MODEL_NAME}_classification_report.csv")
+# print(f"✅ Saved: {OUT_DIR}/{MODEL_NAME}_classification_report.csv")
+
+# # === 8. Confusion matrix ===
+# cm = confusion_matrix(true_ids, pred_ids)
+# cm_df = pd.DataFrame(cm, index=label_names, columns=label_names)
+# cm_df.to_csv(f"{OUT_DIR}/{MODEL_NAME}_confusion_matrix.csv")
+# plt.figure(figsize=(8, 6))
+# sns.heatmap(cm_df, annot=True, fmt="d", cmap="Blues")
+# plt.title(f"{MODEL_NAME.upper()} Confusion Matrix")
+# plt.xlabel("Predicted")
+# plt.ylabel("True")
+# plt.tight_layout()
+# plt.savefig(f"{OUT_DIR}/{MODEL_NAME}_confusion_matrix.png")
+# plt.close()
+# print(f"✅ Saved: {OUT_DIR}/{MODEL_NAME}_confusion_matrix.png")
+
+# # === 9. Misclassified samples ===
+# mis = df[df["true_label_id"] != df["pred_label_id"]]
+# sample_count = min(100, len(mis))
+# mis.sample(sample_count, random_state=42).to_csv(f"{OUT_DIR}/{MODEL_NAME}_misclassified_sample_100.csv", index=False)
+# print(f"✅ Saved: {OUT_DIR}/{MODEL_NAME}_misclassified_sample_100.csv")
+
+# print("✅ RoBERTa evaluation complete.")
