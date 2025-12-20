@@ -1,98 +1,130 @@
-# scripts/generate_f1_table_png.py
-
-import matplotlib.pyplot as plt
+import json
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 # =========================
-# Final model results
+# CONFIG
 # =========================
-data = {
-    "Model": ["BERT", "DistilBERT", "RoBERTa", "ALBERT"],
-    "Anger": [0.682, 0.699, 0.688, 0.683],
-    "Anxiety": [0.774, 0.740, 0.761, 0.729],
-    "Fear": [0.811, 0.809, 0.811, 0.772],
-    "Grief": [0.786, 0.798, 0.794, 0.793],
-    "Sadness": [0.752, 0.754, 0.760, 0.706],
-    "Avg": [0.761, 0.760, 0.763, 0.736],
+RESULTS_DIR = "results"
+MODEL_REPORTS = {
+    "BERT": "bert_classification_report.csv",
+    "DistilBERT": "distilbert_classification_report.csv",
+    "RoBERTa": "roberta_classification_report.csv",
+    "ALBERT": "albert_classification_report.csv",
 }
 
-df = pd.DataFrame(data)
+EMOTIONS = ["anger", "anxiety", "fear", "grief", "sadness"]
+
+os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # =========================
-# Create figure
+# LOAD LABEL MAP
 # =========================
-fig, ax = plt.subplots(figsize=(10, 3))
+id2label = json.load(open("models/id2label.json"))
+id2label = {int(k): v.lower() for k, v in id2label.items()}
+
+# =========================
+# BUILD F1 TABLE
+# =========================
+rows = []
+
+for model, file in MODEL_REPORTS.items():
+    print(f"Processing {model}...")
+
+    df = pd.read_csv(os.path.join(RESULTS_DIR, file))
+    df.columns = [c.strip().lower() for c in df.columns]
+    label_col = df.columns[0]
+
+    df[label_col] = df[label_col].astype(str).str.strip()
+    df = df.set_index(label_col)
+
+    row = {"Model": model}
+    f1_scores = []
+
+    for label_id, emotion in id2label.items():
+        if emotion not in EMOTIONS:
+            continue
+
+        # Accept both numeric-label and text-label reports
+        key = str(label_id) if str(label_id) in df.index else emotion
+        f1 = float(df.loc[key, "f1-score"])
+
+        row[emotion.capitalize()] = round(f1, 3)
+        f1_scores.append(f1)
+
+    row["Avg"] = round(np.mean(f1_scores), 3)
+    rows.append(row)
+
+final_df = pd.DataFrame(rows)
+final_df.to_csv(os.path.join(RESULTS_DIR, "macro_f1_comparison_table.csv"), index=False)
+
+print("Saved macro_f1_comparison_table.csv")
+
+# =========================
+# CREATE PAPER-STYLE TABLE IMAGE
+# =========================
+fig, ax = plt.subplots(figsize=(11, 3))
 ax.axis("off")
 
-# =========================
-# Table content
-# =========================
 table = ax.table(
-    cellText=df.round(3).values,
-    colLabels=df.columns,
+    cellText=final_df.values,
+    colLabels=final_df.columns,
     cellLoc="center",
     loc="center",
 )
 
-# =========================
-# Styling (paper-like)
-# =========================
+# Styling
 table.auto_set_font_size(False)
 table.set_fontsize(11)
 table.scale(1, 1.6)
 
-# Remove all borders first
-for (row, col), cell in table.get_celld().items():
+# Remove all borders
+for (r, c), cell in table.get_celld().items():
     cell.set_edgecolor("white")
     cell.set_linewidth(0)
 
 # Bold header
-for col in range(len(df.columns)):
-    header = table[(0, col)]
-    header.set_text_props(weight="bold")
+for col in range(len(final_df.columns)):
+    table[(0, col)].set_text_props(weight="bold")
 
-# Draw booktabs-style rules
-n_cols = len(df.columns)
+# Booktabs-style rules
+n_cols = len(final_df.columns)
+last_row = len(final_df)
 
 # Top rule
-for col in range(n_cols):
-    cell = table[(0, col)]
+for c in range(n_cols):
+    cell = table[(0, c)]
     cell.visible_edges = "T"
     cell.set_edgecolor("black")
     cell.set_linewidth(1.2)
 
-# Mid rule (below header)
-for col in range(n_cols):
-    cell = table[(1, col)]
+# Mid rule
+for c in range(n_cols):
+    cell = table[(1, c)]
     cell.visible_edges = "T"
     cell.set_edgecolor("black")
     cell.set_linewidth(0.8)
 
 # Bottom rule
-last_row = len(df)
-for col in range(n_cols):
-    cell = table[(last_row, col)]
+for c in range(n_cols):
+    cell = table[(last_row, c)]
     cell.visible_edges = "B"
     cell.set_edgecolor("black")
     cell.set_linewidth(1.2)
 
-# =========================
-# Title (paper style)
-# =========================
 plt.title(
     "Macro F1-score Comparison Across Transformer Models",
     fontsize=13,
     pad=10,
 )
 
-# =========================
-# Save PNG
-# =========================
 plt.savefig(
-    "results/macro_f1_comparison.png",
+    os.path.join(RESULTS_DIR, "macro_f1_comparison.png"),
     dpi=300,
     bbox_inches="tight",
 )
 plt.close()
 
-print("Saved PNG to results/macro_f1_comparison.png")
+print("✅ Saved macro_f1_comparison.png")
