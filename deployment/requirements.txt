@@ -1,0 +1,8 @@
+# dependencies for the Emotion Detection app
+
+streamlit
+torch
+transformers==4.40.2
+numpy
+pandas
+altair
