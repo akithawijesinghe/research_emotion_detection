@@ -1,22 +1,33 @@
-# Don't track these heavy or unnecessary folders/files
+# Python
 venv/
 __pycache__/
 *.pyc
 .DS_Store
-*.joblib
 
+# ML Models & Checkpoints
+models/
+*.pt
+*.pth
+*.bin
+*.safetensors
 
-# Optionally ignore large HuggingFace datasets and models
+# Hugging Face datasets
 data/hf_train_dataset/
 data/hf_test_dataset/
 data/new_hf_train_dataset/
 data/new_hf_test_dataset/
 
+# Training outputs
+results/**/checkpoint-*/
 
-models/
-
-# Temp training cache
+# Cache / temp
 tmp_trainer/
 
-# VS Code settings (optional)
+# Serialized models
+*.joblib
+*.pickle
+*.pkl
+
+# IDEs
 .vscode/
+.idea/
